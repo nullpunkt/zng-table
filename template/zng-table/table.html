@@ -1,0 +1,20 @@
+<table>
+    <thead>
+        <tr>
+            <th 
+                ng-repeat="column in columns" 
+                ng-bind="column.value"
+                ng-class="column.class"
+            ></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="row in rows">
+            <td 
+                ng-repeat="field in row.fields" 
+                ng-class="field.class" 
+                ng-bind="field.value"
+            ></td>
+        </tr>
+    </tbody>
+</table>
