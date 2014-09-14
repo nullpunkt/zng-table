@@ -1,20 +1,23 @@
-<table>
-    <thead>
+<div>
+    <pre ng-bind="config.settings | json"></pre>
+    <table ng-class="config.settings.css.table">
+        <thead>
         <tr>
-            <th 
-                ng-repeat="column in columns" 
-                ng-bind="column.value"
-                ng-class="column.class"
-            ></th>
+            <th
+                    ng-repeat="column in columns"
+                    ng-bind="column.value"
+                    ng-class="column.class"
+                    ></th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         <tr ng-repeat="row in rows">
-            <td 
-                ng-repeat="field in row.fields" 
-                ng-class="field.class" 
-                ng-bind="field.value"
-            ></td>
+            <td
+                    ng-repeat="field in row.fields"
+                    ng-class="field.class"
+                    ng-bind="field.value"
+                    ></td>
         </tr>
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
