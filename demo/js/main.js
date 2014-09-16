@@ -19,11 +19,13 @@ app.controller('DemoCtrl', function($scope, zngTable){
             ]
         }
     })
-        .addField("Name", "name")
+        .addField("Name", "name", "name")
         .addField("Mail", "mail")
         .addField("Web", "web")
-        .addField("Visits", "visits")
-        .setData($scope.objData)
+        .addField("Visits", "visits", "visits")
+//        .setData($scope.objData)
+        .setDataHandler(zngTable.basicDataHandler($scope.objData))
+        .setOrder(0)
     ;
 //    {
 //        styles: {

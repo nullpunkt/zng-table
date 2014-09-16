@@ -1,3 +1,19 @@
 table {
     width: 100%;
 }
+
+th.sortable {
+    background-image: url("../img/arrows.gif");
+    background-position: 6px 14px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    padding-left: 15px !important;
+}
+
+th.sort-asc {
+    background-image: url("../img/arrows_up.gif");
+}
+
+th.sort-desc {
+    background-image: url("../img/arrows_down.gif");
+}

@@ -1,12 +1,13 @@
 <div>
-    <pre ng-bind="config.settings | json"></pre>
+    <pre ng-bind="config.order | json"></pre>
     <table ng-class="config.settings.css.table">
         <thead>
         <tr>
             <th
                     ng-repeat="column in columns"
                     ng-bind="column.value"
-                    ng-class="column.class"
+                    ng-class="clazz.th($index)"
+                    ng-click="sort($index)"
                     ></th>
         </tr>
         </thead>
@@ -14,7 +15,7 @@
         <tr ng-repeat="row in rows">
             <td
                     ng-repeat="field in row.fields"
-                    ng-class="field.class"
+                    ng-class="field.clazz"
                     ng-bind="field.value"
                     ></td>
         </tr>
