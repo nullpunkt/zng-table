@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>zng-table by nullpunkt</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>zng-table</h1>
+        <p>Another angularjs table implementation - simple but powerful</p>
+
+        <p class="view"><a href="https://github.com/nullpunkt/zng-table">View the Project on GitHub <small>nullpunkt/zng-table</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/nullpunkt/zng-table/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/nullpunkt/zng-table/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/nullpunkt/zng-table">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>
+<a name="welcome-to-zng-table" class="anchor" href="#welcome-to-zng-table"><span class="octicon octicon-link"></span></a>Welcome to zng-table</h2>
+
+<p>This project is another try to implement a simple but powerful table abstraction in angularjs. There are <a href="http://bazalt-cms.com/ng-table/">some</a> <a href="http://angulartable.com/">other</a> <a href="http://lorenzofox3.github.io/smart-table-website/">implementations</a> implementations aiming for the same goal.</p>
+
+<p>This approach tries to be as simple as it can be <em>without</em> annoying you with any limitations like a static data model, a fixed position of the pagination ("*sigh - i need a pagination, but i want it to be on the lower left side") and so on.</p>
+
+<p><strong>This project is bloody beta</strong>: Since i am a happy full time working employee i don't have that much time to put into this project. Nevertheless i surely try to release the main features step by step and as soon as possible.</p>
+
+<h3>
+<a name="first-showcase" class="anchor" href="#first-showcase"><span class="octicon octicon-link"></span></a>First showcase</h3>
+
+<pre><code>// HTML
+&lt;div ng-controller="DemoCtrl"&gt;
+    &lt;zng-table config="objTable"&gt;&lt;/zng-table&gt;
+&lt;/div&gt;
+
+// Controller
+$scope.objData = [
+    {name: "Joe", mail: "joe@mail.com", "uri": "http://joe.com", 22}
+];
+
+$scope.objTable = zngTable.create()
+    .addField("Name", "name")
+    .addField("Mail", "mail")
+    .addField("Web", "uri")
+    .addField("Visits", "visits")
+    .setData($scope.objData)
+;
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/nullpunkt">nullpunkt</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
