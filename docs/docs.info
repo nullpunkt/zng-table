@@ -1,0 +1,13 @@
+= requirements
+
+== Basic usecase
+
+
+
+
+== Data handler
+
+The data handler is responsible for managing the data, which is passed to the table. It orders, filters and requests
+the data from the server.
+
+

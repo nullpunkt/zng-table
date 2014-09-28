@@ -4,29 +4,35 @@ app.controller('DemoCtrl', function($scope, zngTable){
 
     $scope.newObjName = "";
 
-    $scope.objData = function(){
-        var names = ["Horst", "Hans", "Vivi", "Kate", "Klaas", "Carol", "Peet"],
+    var objData = function(){
+        var names = ["Horst", "Hans", "Vivi", "Kate", "Klaas", "Carol", "Peet", "Sevjin", "Sengir",
+                        "Laura", "Fynn", "Samir", "Michael", "Steph", "Yoko", "Lebensform", "Hanna",
+                        "Orko", "Tristan", "Isolde", "Ernie", "Bert"],
             data = [];
-        angular.forEach(names, function(name) { data.push(objData(name)) });
+        angular.forEach(names, function(name) { data.push(toObjData(name)) });
         return data;
     }();
 
     $scope.objTable = zngTable.create({
-        css: {
+        styles: {
             table: [
                 'table',
                 'table-striped'
             ]
         }
-    })
-        .addField("Name", "name", "name")
+    }).setDataHandler(zngTable.basicDataHandler(objData)
+        .addField("Name", "name", true)
         .addField("Mail", "mail")
         .addField("Web", "web")
-        .addField("Visits", "visits", "visits")
-//        .setData($scope.objData)
-        .setDataHandler(zngTable.basicDataHandler($scope.objData))
-        .setOrder(0)
-    ;
+        .addField("Visits", "visits", true)
+    );
+//    console.log(zngTable.create().setDataHandler());
+//    
+//    console.log(zngTable.create().setDataHandler(zngTable.basicDataHandler(objData)
+//        .addField("Name", "name")
+//        .addField("Name2", "name")
+//    ));
+    
 //    {
 //        styles: {
 //            clazz: [
@@ -36,12 +42,15 @@ app.controller('DemoCtrl', function($scope, zngTable){
 //        }
 //    }
     $scope.addObjData = function() {
-        $scope.objData.push(objData($scope.newObjName));
-        $scope.objTable.setData($scope.objData);
+        objData.push(toObjData($scope.newObjName));
+        $scope.objTable.getDataHandler().setBase(objData);
+        
+//        objData.push(objData($scope.newObjName));
+//        $scope.objTable.setData($scope.objData);
         $scope.newObjName = "";
     };
     
-    function objData(name) {
+    function toObjData(name) {
         return {
             id: ++window.zi,
             name: name,

@@ -1,18 +1,18 @@
 <div>
-    <pre ng-bind="config.order | json"></pre>
-    <table ng-class="config.settings.css.table">
+    <!--<pre ng-bind="table.headline | json"></pre>-->
+    <table ng-class="config.styles.table">
         <thead>
         <tr>
             <th
-                    ng-repeat="column in columns"
-                    ng-bind="column.value"
-                    ng-class="clazz.th($index)"
+                    ng-repeat="field in table.headline.fields"
+                    ng-bind="field.value"
+                    ng-class="field.clazz"
                     ng-click="sort($index)"
                     ></th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="row in rows">
+        <tr ng-repeat="row in table.data">
             <td
                     ng-repeat="field in row.fields"
                     ng-class="field.clazz"
