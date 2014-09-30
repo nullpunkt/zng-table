@@ -29,6 +29,10 @@ table.directive('zngTable', function() {
                 console.log("detected out of sync");
                 $scope.table.handler.update();
             });
+            $scope.$watch('table.handler.pagination', function(pagination) {
+                console.log("detected pagination");
+//                $scope.table.handler.update();
+            });
             
             $scope.sort = function(index) {
                 if(!$scope.table.handler.fields[index].sortable)return;
@@ -47,7 +51,9 @@ table.directive('zngTable', function() {
 });
 
 table.service('zngTable', function() {
-    return {
+    
+    
+    var zngTable = {
         create: function(cfg) {
             return {
                 config: angular.extend(cfg, {
@@ -63,12 +69,24 @@ table.service('zngTable', function() {
                 setDataHandler: function(dataHandler) {
                     this.handler = dataHandler;
                     this.handler.initialize(this);
-//                    dataHandler.zngTable = this;
                     return this;
                 },
                 
                 getDataHandler: function() {
                     return this.handler;
+                }
+            };
+        },
+        
+        pagination: function() {
+            return {
+                max: 0,
+                perPage: 10,
+                page: 1,
+                
+                setPage: function(page) {
+                    consoel.log('hi '+page);
+                    this.page = page;
                 }
             };
         },
@@ -83,7 +101,6 @@ table.service('zngTable', function() {
                 
                 initialize: function(zngTable) {
                     this.zngTable = zngTable;
-//                    this.update();
                 },
                 
                 setOutOfSync: function() {
@@ -116,17 +133,21 @@ table.service('zngTable', function() {
                 
                 // interface
                 getHeadline: function() {},
-                getData: function() {}
+                getData: function() {},
+                getPagination: function() { return null; }
             };
         },
         
         basicDataHandler: function(data) {
-            return angular.extend(this.dataHandler(), {
-                base: data,
+            var handler = angular.extend(this.dataHandler(), {
+                base: null,
+                pagination: null,
                 
                 setBase: function(base) {
                     this.base = base;
                     this.setOutOfSync();
+                    console.log(base.length);
+                    this.getPagination().max = base.length;
                 },
                 
                 getHeadline: function() {
@@ -173,8 +194,19 @@ table.service('zngTable', function() {
                     });
                     
                     return ret.slice(0, 10);
+                },
+                
+                
+                getPagination: function() { 
+                    if(this.pagination===null) {
+                        this.pagination = zngTable.pagination();
+                    }
+                    return this.pagination; 
                 }
             });
-        }
+            handler.setBase(data);
+            return handler;
+        }    
     };
+    return zngTable;
 });

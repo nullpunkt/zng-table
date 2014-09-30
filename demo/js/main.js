@@ -1,5 +1,5 @@
 window.zi = 0;
-var app = angular.module('demo', ['zng.table']);
+var app = angular.module('demo', ['ui.bootstrap', 'zng.table']);
 app.controller('DemoCtrl', function($scope, zngTable){
 
     $scope.newObjName = "";
@@ -41,6 +41,10 @@ app.controller('DemoCtrl', function($scope, zngTable){
 //            ]
 //        }
 //    }
+    $scope.setPage = function(page) {
+        $scope.objTable.getDataHandler().pagination().setPage(page);
+    }
+
     $scope.addObjData = function() {
         objData.push(toObjData($scope.newObjName));
         $scope.objTable.getDataHandler().setBase(objData);
