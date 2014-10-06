@@ -3,7 +3,7 @@
 if(typeof zng === 'undefined') {
     var zng = {};
 }
-zng.TABLE =  {
+zng.table =  {
     ORDER_DIRECTION_ASC: 'tableOrderAsc',
     ORDER_DIRECTION_DESC: 'tableOrderDesc'
 };
@@ -19,6 +19,14 @@ table.directive('zngTable', function() {
             table: "="
         },
         
+        link: function(scope, element) {
+            scope.$watch(function() {
+                scope.__width = element.width();
+            }, true);
+            
+//            console.log(scope.table.config);
+        },
+        
         controller: function($scope) {
             $scope.$watch('table', function() {
                 console.log("detected new table");
@@ -29,184 +37,202 @@ table.directive('zngTable', function() {
                 console.log("detected out of sync");
                 $scope.table.handler.update();
             });
-            $scope.$watch('table.handler.pagination', function(pagination) {
+            $scope.$watch('table.config.pagination', function(pagination) {
                 console.log("detected pagination");
-//                $scope.table.handler.update();
+                $scope.table.handler.update();
+            }, true);
+            $scope.$watch('__width', function(width) {
+                console.log(width);
             });
             
             $scope.sort = function(index) {
                 if(!$scope.table.handler.fields[index].sortable)return;
                 $scope.config.sort = {
                     direction: (index===$scope.config.sort.index) 
-                        ? ($scope.config.sort.direction===zng.TABLE.ORDER_DIRECTION_ASC) 
-                            ? zng.TABLE.ORDER_DIRECTION_DESC 
-                            : zng.TABLE.ORDER_DIRECTION_ASC
-                        : zng.TABLE.ORDER_DIRECTION_ASC,
+                        ? ($scope.config.sort.direction===zng.table.ORDER_DIRECTION_ASC) 
+                            ? zng.table.ORDER_DIRECTION_DESC 
+                            : zng.table.ORDER_DIRECTION_ASC
+                        : zng.table.ORDER_DIRECTION_ASC,
                     index: index
                 };
                 $scope.table.handler.update();
+            };
+            
+            $scope.styles =  {
+                table: function() {
+                    var ret = {};
+                    if($scope.config.autoWidth) {
+                        ret.width = $scope.__width+"px"
+                    };
+                    console.log(["styles",ret]);
+                    return ret;
+                }
             };
         }
     };
 });
 
+
 table.service('zngTable', function() {
     
-    
-    var zngTable = {
-        create: function(cfg) {
-            return {
-                config: angular.extend(cfg, {
+    return {
+        create: function(handlerFunc, handlerOptions, cfg) {
+            var ret = {
+                config: angular.extend({
+                    autoWidth: true,
+                    styles: {
+                        table: null
+                    },
                     sort: {
                         index: 0,
-                        direction: zng.TABLE.ORDER_DIRECTION_ASC
+                        direction: zng.table.ORDER_DIRECTION_ASC
+                    },
+                    pagination: {
+                        max: 0,
+                        perPage: 10,
+                        page: 1,
+                        
+                        startIndex: function() {
+                            return (this.page-1)*this.perPage;
+                        },
+                        
+                        endIndex: function() {
+                            var ret = this.startIndex()+this.perPage;
+                            if(ret>this.max)ret = this.max;
+                            return ret;
+                        }
                     }
-                }),
+                }, cfg),
+                
                 headline: [],
                 data: [],
                 handler: null,
                 
-                setDataHandler: function(dataHandler) {
-                    this.handler = dataHandler;
-                    this.handler.initialize(this);
-                    return this;
-                },
-                
-                getDataHandler: function() {
-                    return this.handler;
-                }
-            };
-        },
-        
-        pagination: function() {
-            return {
-                max: 0,
-                perPage: 10,
-                page: 1,
-                
-                setPage: function(page) {
-                    consoel.log('hi '+page);
-                    this.page = page;
-                }
-            };
-        },
-        
-        dataHandler: function() {
-            
-            return {
-                
-                zngTable: null,
-                fields: [],
-                oos: true,
-                
-                initialize: function(zngTable) {
-                    this.zngTable = zngTable;
-                },
-                
-                setOutOfSync: function() {
-                    this.oos = true;
-                },
-                
-                synchronize: function() {
-                    if(this.isOutOfSync()) {
-                        this.update();
-                    }
-                },
-                
-                update: function() {
-                    if(this.zngTable===null) {
-                        return;
-                    }
-                    this.zngTable.headline = this.getHeadline();
-                    this.zngTable.data = this.getData();
-                    this.oos = false;
-                },
-                
                 addField: function(topic, index, sortable) {
-                    this.fields.push({
-                        topic: topic,
-                        index: index,
-                        sortable: (sortable !== 'undefined' && sortable)
-                    });
+                    ret.handler.addField(topic, index, sortable);
                     return this;
-                },
-                
-                // interface
-                getHeadline: function() {},
-                getData: function() {},
-                getPagination: function() { return null; }
-            };
-        },
-        
-        basicDataHandler: function(data) {
-            var handler = angular.extend(this.dataHandler(), {
-                base: null,
-                pagination: null,
-                
-                setBase: function(base) {
-                    this.base = base;
-                    this.setOutOfSync();
-                    console.log(base.length);
-                    this.getPagination().max = base.length;
-                },
-                
-                getHeadline: function() {
-                    var sort = this.zngTable.config.sort;
-                    var ret = {
-                        fields: []
-                    };
-                    angular.forEach(this.fields, function(field, index) {
-                        ret.fields.push({
-                            value: field.topic,
-                            clazz: {
-                                sortable: field.sortable,
-                                'sort-asc': field.sortable && (sort.index===index&&sort.direction===zng.TABLE.ORDER_DIRECTION_ASC),
-                                'sort-desc': field.sortable && (sort.index===index&&sort.direction===zng.TABLE.ORDER_DIRECTION_DESC)
-                            }
-                        });
-                    });
-                    return ret;
-                },
-                
-                getData: function() {
-                    var ret = [],
-                        that = this,
-                        sort = this.zngTable.config.sort;
-                    angular.forEach(this.base, function(row) {
-                        var tmp = {
-                            id: angular.isDefined(row.id) ? row.id : null,
-                            fields: []
-                        };
-                        angular.forEach(that.fields, function(field) {
-                            tmp.fields.push({
-                                value: row[field.index],
-                                clazz: []
-                            });
-                        });
-                        ret.push(tmp);
-                    });
-                    
-                    ret = ret.sort(function(a,b) {
-                        var av = a.fields[sort.index].value,
-                            bv = b.fields[sort.index].value,
-                            desc = sort.direction === zng.TABLE.ORDER_DIRECTION_DESC;
-                        return (av < bv) ? (desc ? 1 : -1) : (desc ? -1 : 1);
-                    });
-                    
-                    return ret.slice(0, 10);
-                },
-                
-                
-                getPagination: function() { 
-                    if(this.pagination===null) {
-                        this.pagination = zngTable.pagination();
-                    }
-                    return this.pagination; 
                 }
-            });
-            handler.setBase(data);
-            return handler;
-        }    
+            };
+            ret.handler = new handlerFunc(ret);
+            ret.handler.initialize(handlerOptions);
+            return ret;
+        }
     };
-    return zngTable;
 });
+
+zng.table.handler = {
+    AbstractHandler: function(zngTable) {
+        if(typeof zngTable === 'undefined') {
+            throw 'Please insert zngTable as first argument in handler function.';
+        }
+        
+        this.zngTable = zngTable;
+        this.fields = [];
+        this.oos = true;
+
+        // abstract
+        this.initialize = function(options) {};
+        this.getHeadline = function() {};
+        this.getData = function() {};
+
+        this.setOutOfSync = function() {
+            this.oos = true;
+        };
+
+        this.synchronize = function() {
+            if(this.oos) {
+                this.update();
+            }
+        };
+
+        this.update = function() {
+            zngTable.headline = this.getHeadline();
+            zngTable.data = this.getData();
+            this.oos = false;
+        };
+
+        this.addField = function(topic, index, sortable) {
+            this.fields.push({
+                topic: topic,
+                index: index,
+                sortable: (sortable !== 'undefined' && sortable)
+            });
+            return this;
+        };
+        
+        this.resetFields = function() {
+            this.fields.length = 0;
+        };
+    },
+    
+    BasicHandler: function(zngTable) {
+        
+        angular.extend(this, new zng.table.handler.AbstractHandler(zngTable));
+                
+        this.base = null;
+        
+        this.initialize = function(options) {
+            if(options.length===1)
+                this.setBase(options[0]);
+        };
+        
+        this.setBase = function(base) {
+            this.base = base;
+            this.zngTable.config.pagination.max = this.base.length;
+            this.setOutOfSync();
+        };
+                
+        this.getHeadline = function() {
+            var sort = this.zngTable.config.sort;
+            var ret = {
+                fields: []
+            };
+            angular.forEach(this.fields, function(field, index) {
+                ret.fields.push({
+                    value: field.topic,
+                    clazz: {
+                        sortable: field.sortable,
+                        'sort-asc': field.sortable && (sort.index===index&&sort.direction===zng.table.ORDER_DIRECTION_ASC),
+                        'sort-desc': field.sortable && (sort.index===index&&sort.direction===zng.table.ORDER_DIRECTION_DESC)
+                    }
+                });
+            });
+            return ret;
+        };
+                
+        this.getData = function() {
+            
+            if(this.fields.length===0) {
+                return [];
+            }
+            
+            var ret = [],
+                that = this,
+                pagination = this.zngTable.config.pagination,
+                sort = this.zngTable.config.sort;
+        
+            angular.forEach(this.base, function(row) {
+                var tmp = {
+                    id: angular.isDefined(row.id) ? row.id : null,
+                    fields: []
+                };
+                angular.forEach(that.fields, function(field) {
+                    tmp.fields.push({
+                        value: row[field.index],
+                        clazz: []
+                    });
+                });
+                ret.push(tmp);
+            });
+            
+            ret = ret.sort(function(a,b) {
+                var av = a.fields[sort.index].value,
+                    bv = b.fields[sort.index].value,
+                    desc = sort.direction === zng.table.ORDER_DIRECTION_DESC;
+                return (av < bv) ? (desc ? 1 : -1) : (desc ? -1 : 1);
+            });
+            
+            return ret.slice(pagination.startIndex(), pagination.endIndex());
+        };
+    }
+};

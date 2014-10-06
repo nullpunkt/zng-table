@@ -1,6 +1,10 @@
 <div>
-    <!--<pre ng-bind="table.headline | json"></pre>-->
-    <table ng-class="config.styles.table">
+    <table ng-class="config.styles.table" ng-style="styles.table()">
+        <colgroup>
+            <col 
+                ng-repeat="field in table.headline.fields" 
+                ng-class="field.clazz"/>
+        </colgroup>
         <thead>
         <tr>
             <th

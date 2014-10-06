@@ -13,19 +13,22 @@ app.controller('DemoCtrl', function($scope, zngTable){
         return data;
     }();
 
-    $scope.objTable = zngTable.create({
+    $scope.objTable = zngTable.create(zng.table.handler.BasicHandler, [objData], {
         styles: {
             table: [
                 'table',
                 'table-striped'
             ]
         }
-    }).setDataHandler(zngTable.basicDataHandler(objData)
+    })
         .addField("Name", "name", true)
         .addField("Mail", "mail")
         .addField("Web", "web")
         .addField("Visits", "visits", true)
-    );
+    ;
+    
+    // handler = function, zngTable creates instance of handler and passes in "this"
+    
 //    console.log(zngTable.create().setDataHandler());
 //    
 //    console.log(zngTable.create().setDataHandler(zngTable.basicDataHandler(objData)
@@ -41,13 +44,10 @@ app.controller('DemoCtrl', function($scope, zngTable){
 //            ]
 //        }
 //    }
-    $scope.setPage = function(page) {
-        $scope.objTable.getDataHandler().pagination().setPage(page);
-    }
 
     $scope.addObjData = function() {
         objData.push(toObjData($scope.newObjName));
-        $scope.objTable.getDataHandler().setBase(objData);
+        $scope.objTable.handler.setBase(objData);
         
 //        objData.push(objData($scope.newObjName));
 //        $scope.objTable.setData($scope.objData);
