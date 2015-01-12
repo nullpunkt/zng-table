@@ -5,24 +5,24 @@
                 ng-repeat="field in table.headline.fields" 
                 ng-class="field.clazz"/>
         </colgroup>
-        <thead>
-        <tr>
-            <th
+        <thead ng-show="config.displayHeadline">
+            <tr>
+                <th
                     ng-repeat="field in table.headline.fields"
                     ng-bind="field.value"
                     ng-class="field.clazz"
                     ng-click="sort($index)"
                     ></th>
-        </tr>
+            </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="row in table.data">
-            <td
+            <tr ng-repeat="row in table.data" ng-class="row.clazz">
+                <td
                     ng-repeat="field in row.fields"
                     ng-class="field.clazz"
                     ng-bind="field.value"
                     ></td>
-        </tr>
+            </tr>
         </tbody>
     </table>
 </div>

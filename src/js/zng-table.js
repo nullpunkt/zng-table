@@ -16,33 +16,31 @@ table.directive('zngTable', function() {
         replace: true,
         templateUrl: '/template/zng-table/table.html',
         scope: {
-            table: "="
+            table: "=config"
         },
         
         link: function(scope, element) {
             scope.$watch(function() {
                 scope.__width = element.width();
             }, true);
-            
-//            console.log(scope.table.config);
         },
         
         controller: function($scope) {
             $scope.$watch('table', function() {
-                console.log("detected new table");
+//                console.log("detected new table");
                 $scope.config = $scope.table.config;
             });
             $scope.$watch('table.handler.oos', function(oos) {
                 if(!oos) return;
-                console.log("detected out of sync");
+//                console.log("detected out of sync");
                 $scope.table.handler.update();
             });
-            $scope.$watch('table.config.pagination', function(pagination) {
-                console.log("detected pagination");
+            $scope.$watch('table.pagination', function(pagination) {
+//                console.log("detected pagination");
                 $scope.table.handler.update();
             }, true);
             $scope.$watch('__width', function(width) {
-                console.log(width);
+//                console.log(width);
             });
             
             $scope.sort = function(index) {
@@ -64,7 +62,6 @@ table.directive('zngTable', function() {
                     if($scope.config.autoWidth) {
                         ret.width = $scope.__width+"px"
                     };
-                    console.log(["styles",ret]);
                     return ret;
                 }
             };
@@ -77,36 +74,73 @@ table.service('zngTable', function() {
     
     return {
         create: function(handlerFunc, handlerOptions, cfg) {
+            cfg = angular.extend({
+                displayHeadline: true,
+                autoWidth: true,
+                styles: {
+                    table: null
+                },
+                sort: {
+                    index: 0,
+                    direction: zng.table.ORDER_DIRECTION_ASC
+                },
+                pagination: {
+                }
+            }, cfg);
+            
+            
             var ret = {
-                config: angular.extend({
-                    autoWidth: true,
-                    styles: {
-                        table: null
-                    },
-                    sort: {
-                        index: 0,
-                        direction: zng.table.ORDER_DIRECTION_ASC
-                    },
-                    pagination: {
-                        max: 0,
-                        perPage: 10,
-                        page: 1,
-                        
-                        startIndex: function() {
-                            return (this.page-1)*this.perPage;
-                        },
-                        
-                        endIndex: function() {
-                            var ret = this.startIndex()+this.perPage;
-                            if(ret>this.max)ret = this.max;
-                            return ret;
-                        }
-                    }
-                }, cfg),
+                config: cfg,
                 
                 headline: [],
                 data: [],
                 handler: null,
+                
+                pagination: angular.extend({
+                    max: 0,
+                    perPage: 25,
+                    page: 1,
+                    display: true,
+                    perPageOptions: [10, 25, 50, 100],
+
+                    startIndex: function() {
+                        return (this.page-1)*this.perPage;
+                    },
+
+                    endIndex: function() {
+                        var ret = this.startIndex()+(this.perPage-1);
+                        var max = this.max-1;
+                        if(ret>max)ret = max;
+                        return ret;
+                    },
+                    
+                    firstItemNumber: function() {
+                        return this.startIndex()+1;
+                    },
+                    
+                    lastItemNumber: function() {
+                        return this.endIndex()+1;
+                    },
+                    
+                    offset: function() {
+                        return this.startIndex();
+                    },
+                    
+                    changePage: function(direction) {
+                        this.page += direction;
+                        if(this.page<1)this.page = 1;
+                        if(this.page>this.lastPage())this.page = this.lastPage();
+                    },
+                    
+                    lastPage: function() {
+                        return Math.ceil(this.max/this.perPage);
+                    },
+                    
+                    changePerPage: function(perPage) {
+                        this.page = 1;
+                        this.perPage = perPage;
+                    }
+                }, cfg.pagination),
                 
                 addField: function(topic, index, sortable) {
                     ret.handler.addField(topic, index, sortable);
@@ -127,7 +161,6 @@ zng.table.handler = {
         }
         
         this.zngTable = zngTable;
-        this.fields = [];
         this.oos = true;
 
         // abstract
@@ -150,19 +183,6 @@ zng.table.handler = {
             zngTable.data = this.getData();
             this.oos = false;
         };
-
-        this.addField = function(topic, index, sortable) {
-            this.fields.push({
-                topic: topic,
-                index: index,
-                sortable: (sortable !== 'undefined' && sortable)
-            });
-            return this;
-        };
-        
-        this.resetFields = function() {
-            this.fields.length = 0;
-        };
     },
     
     BasicHandler: function(zngTable) {
@@ -170,6 +190,7 @@ zng.table.handler = {
         angular.extend(this, new zng.table.handler.AbstractHandler(zngTable));
                 
         this.base = null;
+        this.fields = [];
         
         this.initialize = function(options) {
             if(options.length===1)
@@ -178,8 +199,36 @@ zng.table.handler = {
         
         this.setBase = function(base) {
             this.base = base;
-            this.zngTable.config.pagination.max = this.base.length;
+            this.zngTable.pagination.max = this.base.length;
             this.setOutOfSync();
+        };
+
+        this.addField = function(topic, index, options) {
+            // options is boolean so use it as sortable indicator
+            if(options===true||options===false) {
+                options = {
+                    sortable: options
+                };
+            }
+            options = angular.extend({
+                sortable: false,
+                sortIndex: null,
+                clazz: []
+            }, options);
+            
+            
+            this.fields.push({
+                topic: topic,
+                index: index,
+                sortable: options.sortable,
+                sortIndex: options.sortIndex,
+                clazz: options.clazz,
+            });
+            return this;
+        };
+        
+        this.resetFields = function() {
+            this.fields.length = 0;
         };
                 
         this.getHeadline = function() {
@@ -188,13 +237,22 @@ zng.table.handler = {
                 fields: []
             };
             angular.forEach(this.fields, function(field, index) {
+                var clazz = [];
+                if(field.sortable) {
+                    clazz.push('sortable');
+                    if(sort.index===index&&sort.direction===zng.table.ORDER_DIRECTION_ASC) {
+                        clazz.push('sort-asc');
+                    }
+                    if(sort.index===index&&sort.direction===zng.table.ORDER_DIRECTION_DESC) {
+                        clazz.push('sort-desc');
+                    }
+                }
+                angular.forEach(field.clazz, function(cl) {
+                    clazz.push(cl);
+                });
                 ret.fields.push({
                     value: field.topic,
-                    clazz: {
-                        sortable: field.sortable,
-                        'sort-asc': field.sortable && (sort.index===index&&sort.direction===zng.table.ORDER_DIRECTION_ASC),
-                        'sort-desc': field.sortable && (sort.index===index&&sort.direction===zng.table.ORDER_DIRECTION_DESC)
-                    }
+                    clazz: clazz
                 });
             });
             return ret;
@@ -208,7 +266,7 @@ zng.table.handler = {
             
             var ret = [],
                 that = this,
-                pagination = this.zngTable.config.pagination,
+                pagination = this.zngTable.pagination,
                 sort = this.zngTable.config.sort;
         
             angular.forEach(this.base, function(row) {
@@ -217,8 +275,10 @@ zng.table.handler = {
                     fields: []
                 };
                 angular.forEach(that.fields, function(field) {
+                    var idx = (field.sortIndex===null) ? field.index : field.sortIndex;
                     tmp.fields.push({
                         value: row[field.index],
+                        order: row[idx],
                         clazz: []
                     });
                 });
@@ -226,8 +286,8 @@ zng.table.handler = {
             });
             
             ret = ret.sort(function(a,b) {
-                var av = a.fields[sort.index].value,
-                    bv = b.fields[sort.index].value,
+                var av = a.fields[sort.index].order,
+                    bv = b.fields[sort.index].order,
                     desc = sort.direction === zng.table.ORDER_DIRECTION_DESC;
                 return (av < bv) ? (desc ? 1 : -1) : (desc ? -1 : 1);
             });
@@ -236,3 +296,21 @@ zng.table.handler = {
         };
     }
 };
+
+
+table.directive('zngPagination', function() {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: '/template/zng-table/pagination.html',
+        scope: {
+            pagination: "=config"
+        },
+        
+        link: function(scope, element) {
+        },
+        
+        controller: function($scope) {
+        }
+    };
+});

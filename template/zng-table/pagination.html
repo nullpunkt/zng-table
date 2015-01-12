@@ -1,3 +1,39 @@
-<div class="row pagination-container">
-    <div><span>1</span><span> - </span><span>20</span><span> of </span><span>400</span></div>
+<div class="table-pager count" ng-show="pagination.display">
+    <span class="ng-binding" ng-bind="pagination.firstItemNumber()"></span>
+    <span> - </span>
+    <span class="ng-binding" ng-bind="pagination.lastItemNumber()"></span>
+    <span> von </span>
+    <span class="ng-binding" ng-bind="pagination.max"></span>
+    <div class="pager-actions">
+        <input 
+            type="button" 
+            class="btn small" 
+            value="&lt;" 
+            onclick="this.blur();"
+            ng-class="{inactive: pagination.page == 1}" 
+            ng-click="pagination.changePage(-1)">
+        <input 
+            type="button" 
+            class="btn small" 
+            value="&gt;" 
+            onclick="this.blur();"
+            ng-class="{inactive: pagination.page == pagination.lastPage()}" 
+            ng-click="pagination.changePage(1)">
+        <span class="dropdown">
+            <input 
+                type="button" 
+                class="btn small settings dropdown-toggle" 
+                value="+"
+                onclick="this.blur();"
+                >
+            <ul class="dropdown-menu" role="menu">
+                <li class="divider">Einträge pro Seite</li>
+                <li 
+                    ng-repeat="perPage in pagination.perPageOptions"
+                    ng-bind="perPage"
+                    ng-click="pagination.changePerPage(perPage);"></li>
+            </ul>
+        </span>
+    </div>
+    <div class="clear"></div>
 </div>
