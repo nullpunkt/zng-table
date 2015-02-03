@@ -21,7 +21,7 @@ table.directive('zngTable', function() {
         
         link: function(scope, element) {
             scope.$watch(function() {
-                scope.__width = element.width();
+                scope.__width = element.prop('offsetWidth');
             }, true);
         },
         
