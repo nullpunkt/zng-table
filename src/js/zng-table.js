@@ -193,8 +193,9 @@ zng.table.handler = {
         this.fields = [];
         
         this.initialize = function(options) {
-            if(options.length===1)
-                this.setBase(options[0]);
+            if(angular.isArray(options)) {
+                this.setBase(options);
+            }
         };
         
         this.setBase = function(base) {
