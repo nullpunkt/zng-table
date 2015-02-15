@@ -1,8 +1,4 @@
 ---
- name: The Name of the Demo
- description: Some description, please keep it in one line
- authors:
-   - Tobias Seipke
  resources:
    - https://code.angularjs.org/1.3.9/angular.min.js
    - https://cdn.rawgit.com/twbs/bootstrap/master/dist/css/bootstrap.min.css
@@ -11,5 +7,4 @@
    - https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap.min.js
    - https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.min.js
    - https://rawgit.com/nullpunkt/zng-table/master/src/js/zng-table.js
- normalize_css: no
- ...
+---

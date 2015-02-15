@@ -199,6 +199,7 @@ zng.table.handler = {
         };
         
         this.setBase = function(base) {
+            console.log(base);
             this.base = base;
             zngTable.pagination.max = this.base.length;
             this.setOutOfSync();
@@ -267,8 +268,9 @@ zng.table.handler = {
                 that = this,
                 pagination = zngTable.pagination,
                 sort = zngTable.config.sort;
-        
+
             angular.forEach(this.base, function(row) {
+                console.log(row);
                 var tmp = {
                     id: angular.isDefined(row.id) ? row.id : null,
                     fields: []
@@ -290,8 +292,8 @@ zng.table.handler = {
                     desc = sort.direction === zng.table.ORDER_DIRECTION_DESC;
                 return (av < bv) ? (desc ? 1 : -1) : (desc ? -1 : 1);
             });
-            
-            return ret.slice(pagination.startIndex(), pagination.endIndex());
+            console.log(ret, pagination.startIndex(), pagination.endIndex());
+            return ret.slice(pagination.startIndex(), pagination.endIndex()+1);
         };
     }
 };
