@@ -1,0 +1,25 @@
+{
+  "name": "zng-table",
+  "version": "0.0.1",
+  "description": "Welcome to zng-table\r =========",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://nullpunkt@github.com/nullpunkt/zng-table.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nullpunkt/zng-table/issues"
+  },
+  "homepage": "https://github.com/nullpunkt/zng-table",
+  "devDependencies": {
+    "grunt-angular-templates": "^0.5.7"
+  }
+}
