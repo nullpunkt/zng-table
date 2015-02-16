@@ -15,7 +15,7 @@ table.directive('zngTable', function() {
         restrict: 'E',
         replace: true,
         templateUrl: function(elem, attrs) {
-            return attrs.template || '/template/zng-table/table.html'
+            return attrs.template || 'template/zng-table/table.html'
         },
         scope: {
             table: "=table"
@@ -27,7 +27,7 @@ table.directive('zngTable', function() {
             }, true);
         },
         
-        controller: function($scope) {
+        controller: ['$scope', function($scope) {
             $scope.$watch('table', function(table) {
                 //console.log("detected new table");
                 $scope.config = $scope.table.config;
@@ -67,7 +67,7 @@ table.directive('zngTable', function() {
                     return ret;
                 }
             };
-        }
+        }]
     };
 });
 
@@ -199,7 +199,6 @@ zng.table.handler = {
         };
         
         this.setBase = function(base) {
-            console.log(base);
             this.base = base;
             zngTable.pagination.max = this.base.length;
             this.setOutOfSync();
@@ -270,7 +269,6 @@ zng.table.handler = {
                 sort = zngTable.config.sort;
 
             angular.forEach(this.base, function(row) {
-                console.log(row);
                 var tmp = {
                     id: angular.isDefined(row.id) ? row.id : null,
                     fields: []
@@ -292,7 +290,6 @@ zng.table.handler = {
                     desc = sort.direction === zng.table.ORDER_DIRECTION_DESC;
                 return (av < bv) ? (desc ? 1 : -1) : (desc ? -1 : 1);
             });
-            console.log(ret, pagination.startIndex(), pagination.endIndex());
             return ret.slice(pagination.startIndex(), pagination.endIndex()+1);
         };
     }
@@ -304,7 +301,7 @@ table.directive('zngPagination', function() {
         restrict: 'E',
         replace: true,
         templateUrl: function(elem, attrs) {
-            return attrs.template || '/template/zng-table/pagination.html'
+            return attrs.template || 'template/zng-table/pagination.html'
         },
         scope: {
             pagination: "=config"

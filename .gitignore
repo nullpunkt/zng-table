@@ -1,4 +1,6 @@
 */bower_components/*
 */vendor/*
 /.idea
+/.idea/*
 /node_modules
+/jsfiddle/template
