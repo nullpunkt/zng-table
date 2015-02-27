@@ -9,9 +9,15 @@ $start = 'resources:';
 
 $assets = preg_grep("/^[ ]*-(.*)$/", explode("\n", substr($config, strpos($config, $start))));
 
-$minified = TRUE;
+$minified = FALSE;
 
 $replace = array(
+    'https://code.angularjs.org/1.3.9/angular.min.js' => '/jsfiddle/bower_components/angularjs/angular.min.js',
+    'https://cdn.rawgit.com/twbs/bootstrap/master/dist/css/bootstrap.min.css' => '/jsfiddle/bower_components/bootstrap/dist/css/bootstrap.min.css',
+    'https://code.jquery.com/jquery-2.1.3.min.js' => '/jsfiddle/bower_components/jquery/dist/jquery.min.js',
+    'https://cdn.rawgit.com/twbs/bootstrap/master/dist/js/bootstrap.min.js' => '/jsfiddle/bower_components/bootstrap/dist/js/bootstrap.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap.min.js' => '/jsfiddle/bower_components/angular-bootstrap/ui-bootstrap.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.0/ui-bootstrap-tpls.min.js' => '/jsfiddle/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
     'https://rawgit.com/nullpunkt/zng-table/master/src/js/zng-table.js' => ($minified ? '/build/zng-table.min.js' : '/src/js/zng-table.js')
 );
 
