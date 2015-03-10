@@ -4,7 +4,8 @@ if(file_exists('vendor/autoload.php')) {
 }
 
 //$demo = 'first_table';
-$demo = 'runtime_data_changes';
+//$demo = 'runtime_data_changes';
+$demo = 'onclick_row';
 $config = file_get_contents('demos/'.$demo.'/demo.details');
 $start = 'resources:';
 

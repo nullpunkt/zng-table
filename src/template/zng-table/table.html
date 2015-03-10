@@ -16,7 +16,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="row in table.data" ng-class="row.clazz">
+            <tr ng-repeat="row in table.data" ng-class="row.clazz" ng-click="click.row(row)">
                 <td
                     ng-repeat="field in row.fields"
                     ng-class="field.clazz"

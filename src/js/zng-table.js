@@ -5,7 +5,9 @@ if(typeof zng === 'undefined') {
 }
 zng.table =  {
     ORDER_DIRECTION_ASC: 'tableOrderAsc',
-    ORDER_DIRECTION_DESC: 'tableOrderDesc'
+    ORDER_DIRECTION_DESC: 'tableOrderDesc',
+
+    EVENT_CLICKED_ROW: 'tableEventClickedRow'
 };
 
 var table = angular.module('zng.table', []);
@@ -67,6 +69,12 @@ table.directive('zngTable', function() {
                     return ret;
                 }
             };
+
+            $scope.click = {
+                row: function(data) {
+                    $scope.table.fire(zng.table.EVENT_CLICKED_ROW, data.raw);
+                }
+            }
         }]
     };
 });
@@ -87,6 +95,9 @@ table.service('zngTable', function() {
                     direction: zng.table.ORDER_DIRECTION_ASC
                 },
                 pagination: {
+                },
+                handler: {
+                    click: null
                 }
             }, cfg);
 
@@ -96,7 +107,8 @@ table.service('zngTable', function() {
                 headline: [],
                 data: [],
                 handler: null,
-                
+                eventHandler: {},
+
                 pagination: angular.extend({
                     max: 0,
                     perPage: 25,
@@ -146,6 +158,22 @@ table.service('zngTable', function() {
                 addField: function(topic, index, sortable) {
                     ret.handler.addField(topic, index, sortable);
                     return this;
+                },
+                setIdField: function(idx) {
+                    ret.handler.setIdField(idx);
+                    return this;
+                },
+                addEventHandler: function(event, handlerFunction) {
+                    if(!ret.eventHandler[event]) {
+                        ret.eventHandler[event] = [];
+                    }
+                    ret.eventHandler[event].push(handlerFunction);
+                    return this;
+                },
+                fire: function(event, obj) {
+                    angular.forEach(ret.eventHandler[event], function(func) {
+                        func(obj);
+                    });
                 }
             };
             ret.handler = new handlerFunc(ret);
@@ -167,6 +195,7 @@ zng.table.handler = {
         this.initialize = function(options) {};
         this.getHeadline = function() {};
         this.getData = function() {};
+        this.setIdField = function(idx) {};
 
         this.setOutOfSync = function() {
             this.oos = true;
@@ -191,10 +220,22 @@ zng.table.handler = {
                 
         this.base = null;
         this.fields = [];
-        
+
+        var config = {
+        };
+
         this.initialize = function(options) {
             if(angular.isArray(options)) {
                 this.setBase(options);
+            } else if(angular.isObject(options)) {
+                this.setBase(options.data);
+                if(angular.isObject(options.config)) {
+                    angular.forEach(options.config, function(val, idx) {
+                        if(angular.isDefined(config[idx])) {
+                            config[idx] = val;
+                        }
+                    });
+                }
             }
         };
         
@@ -221,7 +262,7 @@ zng.table.handler = {
                 index: index,
                 sortable: options.sortable,
                 sortIndex: options.sortIndex,
-                clazz: options.clazz,
+                clazz: options.clazz
             });
             return this;
         };
@@ -270,7 +311,7 @@ zng.table.handler = {
 
             angular.forEach(this.base, function(row) {
                 var tmp = {
-                    id: angular.isDefined(row.id) ? row.id : null,
+                    raw: row,
                     fields: []
                 };
                 angular.forEach(that.fields, function(field) {
