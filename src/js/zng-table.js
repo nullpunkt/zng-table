@@ -163,11 +163,11 @@ table.service('zngTable', function() {
                     ret.handler.setIdField(idx);
                     return this;
                 },
-                addEventHandler: function(event, handlerFunction) {
+                addEventListener: function(event, func) {
                     if(!ret.eventHandler[event]) {
                         ret.eventHandler[event] = [];
                     }
-                    ret.eventHandler[event].push(handlerFunction);
+                    ret.eventHandler[event].push(func);
                     return this;
                 },
                 fire: function(event, obj) {

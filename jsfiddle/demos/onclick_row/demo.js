@@ -21,7 +21,7 @@ app.controller('MyCtrl', ['$scope', 'zngTable', function($scope, zngTable) {
         .addField("Mail", 1)
         .addField("Web", 2)
         .addField("Visits", 3)
-        .addEventHandler(zng.table.EVENT_CLICKED_ROW, $scope.clickHandler)
+        .addEventListener(zng.table.EVENT_CLICKED_ROW, $scope.clickHandler)
     ;
 
 }]);
