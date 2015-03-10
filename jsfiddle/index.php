@@ -3,7 +3,8 @@ if(file_exists('vendor/autoload.php')) {
     require_once 'vendor/autoload.php';
 }
 
-$demo = 'first_table';
+//$demo = 'first_table';
+$demo = 'runtime_data_changes';
 $config = file_get_contents('demos/'.$demo.'/demo.details');
 $start = 'resources:';
 

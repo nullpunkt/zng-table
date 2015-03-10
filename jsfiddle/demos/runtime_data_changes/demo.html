@@ -1,0 +1,10 @@
+<div ng-app="demo" ng-controller="MyCtrl">
+    <zng-table table="table"></zng-table>
+    <pre ng-bind="data | json"></pre>
+
+    <div>
+        <label for="input_name">Name</label>
+        <input id="input_name" type="text" ng-model="name">
+        <button class="btn btn-primary" ng-click="add()">Add</button>
+    </div>
+</div>

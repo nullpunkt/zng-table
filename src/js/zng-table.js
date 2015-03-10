@@ -33,7 +33,7 @@ table.directive('zngTable', function() {
                 $scope.config = $scope.table.config;
             });
             $scope.$watch('table.handler.oos', function(oos) {
-//                console.log("detected out of sync");
+                console.log("detected out of sync");
                 $scope.table.handler.update();
             });
             $scope.$watch('table.pagination', function(pagination) {
