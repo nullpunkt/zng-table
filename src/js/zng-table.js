@@ -326,8 +326,8 @@ zng.table.handler = {
             });
             
             ret = ret.sort(function(a,b) {
-                var av = a.fields[sort.index].order,
-                    bv = b.fields[sort.index].order,
+                var av = (a.fields && a.fields[sort.index] && a.fields[sort.index].order) ?  a.fields[sort.index].order : null,
+                    bv = (b.fields && b.fields[sort.index] && b.fields[sort.index].order) ?  b.fields[sort.index].order : null,
                     desc = sort.direction === zng.table.ORDER_DIRECTION_DESC;
                 return (av < bv) ? (desc ? 1 : -1) : (desc ? -1 : 1);
             });

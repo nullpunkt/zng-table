@@ -1,0 +1,18 @@
+body {
+    margin: 20px;
+}
+
+.table > thead > tr > th.sortable {
+    background: url(http://desktop.arcgis.com/en/desktop/latest/guide-books/extensions/production-mapping/GUID-5CF1BEF7-9E17-4DBB-BDCA-27C246B80D44-web.gif) 7px 9px no-repeat;
+    padding-left: 29px;
+}
+
+.table > thead > tr > th.sortable.sort-asc {
+    background: url(http://desktop.arcgis.com/en/desktop/latest/guide-books/extensions/production-mapping/GUID-5CF1BEF7-9E17-4DBB-BDCA-27C246B80D44-web.gif) 7px 9px no-repeat;
+}
+
+
+.table > thead > tr > th.sortable.sort-desc {
+    background: url(http://desktop.arcgis.com/en/desktop/latest/guide-books/extensions/production-mapping/GUID-9B3A3E05-6EC8-4805-8326-7CBE917700F6-web.gif) 7px 9px no-repeat;
+}
+
