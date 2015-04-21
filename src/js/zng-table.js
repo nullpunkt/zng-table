@@ -322,8 +322,9 @@ zng.table.handler = {
                     var idx = (field.sortIndex===null) ? field.index : field.sortIndex;
                     var v = row[field.index];
                     if(field.filter!==null) {
-                        var f = angular.copy(field.filter);
-                        v = zngTable.$filter(f.shift()).apply(f.unshift(v));
+                        var f = angular.copy(field.filter), f0 = f.shift();
+                        f.unshift(v);
+                        v = zngTable.$filter(f0).apply(this, f);
                     }
                     tmp.fields.push({
                         value: v,
