@@ -80,8 +80,7 @@ table.directive('zngTable', function() {
 });
 
 
-table.service('zngTable', function() {
-    
+table.service('zngTable', ['$filter', function($filter) {
     return {
         create: function(handlerFunc, handlerOptions, cfg) {
             cfg = angular.extend({
@@ -102,12 +101,15 @@ table.service('zngTable', function() {
             }, cfg);
 
             var ret = {
+
                 config: cfg,
-                
+
                 headline: [],
                 data: [],
                 handler: null,
                 eventHandler: {},
+
+                $filter: $filter,
 
                 pagination: angular.extend({
                     max: 0,
@@ -181,7 +183,7 @@ table.service('zngTable', function() {
             return ret;
         }
     };
-});
+}]);
 
 zng.table.handler = {
     AbstractHandler: function(zngTable) {
@@ -255,14 +257,16 @@ zng.table.handler = {
             options = angular.extend({
                 sortable: false,
                 sortIndex: null,
-                clazz: []
+                clazz: [],
+                filter: null
             }, options);
             this.fields.push({
                 topic: topic,
                 index: index,
                 sortable: options.sortable,
                 sortIndex: options.sortIndex,
-                clazz: options.clazz
+                clazz: options.clazz,
+                filter: options.filter
             });
             return this;
         };
@@ -316,8 +320,13 @@ zng.table.handler = {
                 };
                 angular.forEach(that.fields, function(field) {
                     var idx = (field.sortIndex===null) ? field.index : field.sortIndex;
+                    var v = row[field.index];
+                    if(field.filter!==null) {
+                        var f = angular.copy(field.filter);
+                        v = zngTable.$filter(f.shift()).apply(f.unshift(v));
+                    }
                     tmp.fields.push({
-                        value: row[field.index],
+                        value: v,
                         order: row[idx],
                         clazz: []
                     });
