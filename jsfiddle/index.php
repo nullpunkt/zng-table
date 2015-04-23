@@ -3,7 +3,8 @@ if(file_exists('vendor/autoload.php')) {
     require_once 'vendor/autoload.php';
 }
 
-$demo = 'column_value_filter';
+$demo = 'clazz';
+//$demo = 'column_value_filter';
 //$demo = 'first_table';
 //$demo = 'runtime_data_changes';
 //$demo = 'table_sort';

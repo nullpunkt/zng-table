@@ -258,6 +258,7 @@ zng.table.handler = {
                 sortable: false,
                 sortIndex: null,
                 clazz: [],
+                clazzHeadline: [],
                 filter: null
             }, options);
             this.fields.push({
@@ -266,6 +267,7 @@ zng.table.handler = {
                 sortable: options.sortable,
                 sortIndex: options.sortIndex,
                 clazz: options.clazz,
+                clazzHeadline: options.clazzHeadline,
                 filter: options.filter
             });
             return this;
@@ -291,7 +293,7 @@ zng.table.handler = {
                         clazz.push('sort-desc');
                     }
                 }
-                angular.forEach(field.clazz, function(cl) {
+                angular.forEach(field.clazzHeadline, function(cl) {
                     clazz.push(cl);
                 });
                 ret.fields.push({
@@ -326,10 +328,22 @@ zng.table.handler = {
                         f.unshift(v);
                         v = zngTable.$filter(f0).apply(this, f);
                     }
+                    var clazz = [];
+
+                    if(angular.isArray(field.clazz)) {
+                        angular.forEach(field.clazz, function(cl) {
+                            clazz.push(cl);
+                        });
+                    } else if(angular.isFunction(field.clazz)) {
+                        clazz = field.clazz(row[field.index], row, field.index);
+                    } else {
+                        clazz.push(field.clazz);
+                    }
+
                     tmp.fields.push({
                         value: v,
                         order: row[idx],
-                        clazz: []
+                        clazz: clazz
                     });
                 });
                 ret.push(tmp);
